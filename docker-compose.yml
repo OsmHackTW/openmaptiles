@@ -44,7 +44,7 @@ services:
     networks:
     - postgres_conn
   import-osm-diff:
-    image: "openmaptiles/import-osm:0.4"
+    image: "openmaptiles/import-osm:0.5"
     env_file: .env
     command: ./import_diff.sh
     environment:
@@ -90,14 +90,6 @@ services:
     volumes:
      - .:/tileset
      - ./build:/sql
-  mapbox-studio:
-    image: "osm2vectortiles/mapbox-studio"
-    volumes:
-     - ./build/openmaptiles.tm2source:/projects/openmaptiles.tm2source
-    networks:
-     - postgres_conn
-    ports:
-     - "3000:3000"
   generate-changed-vectortiles:
     image: "openmaptiles/generate-vectortiles:0.1.1"
     command: ./export-list.sh
