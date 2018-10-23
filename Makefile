@@ -80,6 +80,26 @@ import-osm: db-start
 	docker-compose run --rm openmaptiles-tools make
 	docker-compose run --rm import-osm
 
+import-water: db-start
+	docker-compose run --rm openmaptiles-tools make clean
+	docker-compose run --rm openmaptiles-tools make
+	docker-compose run --rm import-water
+
+import-natural-earth: db-start
+	docker-compose run --rm openmaptiles-tools make clean
+	docker-compose run --rm openmaptiles-tools make
+	docker-compose run --rm import-natural-earth
+	
+import-lakelines: db-start
+	docker-compose run --rm openmaptiles-tools make clean
+	docker-compose run --rm openmaptiles-tools make
+	docker-compose run --rm import-lakelines
+	
+import-osmborder: db-start
+	docker-compose run --rm openmaptiles-tools make clean
+	docker-compose run --rm openmaptiles-tools make
+	docker-compose run --rm import-osmborder
+	
 import-sql: db-start
 	docker-compose run --rm openmaptiles-tools make clean
 	docker-compose run --rm openmaptiles-tools make
