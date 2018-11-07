@@ -11,29 +11,28 @@ help:
 	@echo "Hints for designers:"
 	@echo "  make start-postserve                 # start Postserver + Maputnik Editor [ see localhost:8088 ] "
 	@echo "  make start-tileserver                # start klokantech/tileserver-gl [ see localhost:8080 ] "
-	@echo "  make start-mapbox-studio             # start Mapbox Studio"
 	@echo "  "
 	@echo "Hints for developers:"
-	@echo "  make                                 # build source code  "
+	@echo "  make                                 # build source code"
 	@echo "  make download-geofabrik area=albania # download OSM data from geofabrik, and create config file"
-	@echo "  make psql                            # start PostgreSQL console "
-	@echo "  make psql-list-tables                # list all PostgreSQL tables "
+	@echo "  make psql                            # start PostgreSQL console"
+	@echo "  make psql-list-tables                # list all PostgreSQL tables"
 	@echo "  make psql-vacuum-analyze             # PostgreSQL: VACUUM ANALYZE"
 	@echo "  make psql-analyze                    # PostgreSQL: ANALYZE"
 	@echo "  make generate-qareports              # generate reports [./build/qareports]"
 	@echo "  make generate-devdoc                 # generate devdoc  [./build/devdoc]"
-	@echo "  make import-sql-dev                  # start import-sql  /bin/bash terminal "
-	@echo "  make import-osm-dev                  # start import-osm  /bin/bash terminal (imposm3)"
-	@echo "  make clean-docker                    # remove docker containers, PG data volume "
-	@echo "  make forced-clean-sql                # drop all PostgreSQL tables for clean environment "
+	@echo "  make import-sql-dev                  # start import-sql /bin/bash terminal"
+	@echo "  make import-osm-dev                  # start import-osm /bin/bash terminal (imposm3)"
+	@echo "  make clean-docker                    # remove docker containers, PG data volume"
+	@echo "  make forced-clean-sql                # drop all PostgreSQL tables for clean environment"
 	@echo "  make docker-unnecessary-clean        # clean unnecessary docker image(s) and container(s)"
 	@echo "  make refresh-docker-images           # refresh openmaptiles docker images from Docker HUB"
 	@echo "  make remove-docker-images            # remove openmaptiles docker images"
 	@echo "  make pgclimb-list-views              # list PostgreSQL public schema views"
-	@echo "  make pgclimb-list-tables             # list PostgreSQL public schema tabless"
-	@echo "  cat  .env                            # list PG database and MIN_ZOOM and MAX_ZOOM informations"
-	@echo "  cat ./quickstart.log                 # backup  of the last ./quickstart.sh "
-	@echo "  make help                            # help about avaialable commands"
+	@echo "  make pgclimb-list-tables             # list PostgreSQL public schema tables"
+	@echo "  cat  .env                            # list PG database and MIN_ZOOM and MAX_ZOOM information"
+	@echo "  cat ./quickstart.log                 # backup of the last ./quickstart.sh"
+	@echo "  make help                            # help about available commands"
 	@echo "=============================================================================="
 
 build/openmaptiles.tm2source/data.yml:
@@ -164,12 +163,6 @@ start-postserve:
 	@echo " "
 	docker rm -f maputnik_editor || true
 	docker run --name maputnik_editor -d -p 8088:8888 maputnik/editor
-
-
-start-mapbox-studio:
-	docker-compose up mapbox-studio
-
-
 
 generate-qareports:
 	./qa/run.sh
