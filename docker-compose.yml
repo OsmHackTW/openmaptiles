@@ -13,7 +13,7 @@ services:
      - "5432"
     env_file: .env
   import-natural-earth:
-    image: "openmaptiles/import-natural-earth:1.4"
+    image: "openmaptiles/import-natural-earth:1.5"
     env_file: .env
     networks:
     - postgres_conn
@@ -68,7 +68,7 @@ services:
      - ./build:/mapping
      - cache:/cache
   import-sql:
-    image: "openmaptiles/import-sql:0.7"
+    image: "openmaptiles/import-sql:0.8"
     env_file: .env
     networks:
     - postgres_conn
