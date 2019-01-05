@@ -1,0 +1,15 @@
+layer:
+  id: "contour"
+  description: |
+      contour test
+  fields:
+    height: |
+        Elevation in meters (10m resolution) 
+    nth_line: |
+        Marks every other, 2nd, 5th or 10th line
+  buffer_size: 4
+  datasource:
+    geometry_field: geometry
+    query: (SELECT geometry, nth_line, height FROM layer_contour(!bbox!, z(!scale_denominator!))) AS t
+schema:
+  - ./contour.sql

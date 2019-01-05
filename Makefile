@@ -1,7 +1,8 @@
 .PHONY: db-start
-test: import-osm import-non-osm import-empty-wikidata import-sql
 
 all: build/openmaptiles.tm2source/data.yml build/mapping.yaml build/tileset.sql
+
+test: import-osm import-non-osm import-empty-wikidata import-sql
 
 help:
 	@echo "=============================================================================="
@@ -236,3 +237,28 @@ docker-unnecessary-clean:
 	@docker ps -a  | grep Exited | awk -F" " '{print $$1}' | xargs  --no-run-if-empty docker rm
 	@echo "Deleting unnecessary image(s)..."
 	@docker images | grep \<none\> | awk -F" " '{print $$3}' | xargs  --no-run-if-empty  docker rmi
+
+export CURRENT_UID := $(shell id -u):$(shell id -g)
+
+contour: 
+	mkdir contour
+
+contour/dem_20m.zip: contour
+	docker-compose run --rm curl -L -o /contour/$(@F) http://data.moi.gov.tw/MoiOD/System/DownloadFile.aspx?DATA=89476AAA-53A8-46C6-8161-0E38B700B772
+
+contour/dem_20m-wgs84.tif: contour/dem_20m.zip
+	docker-compose run --rm curl unzip /contour/$(<F) -d /contour dem_20m.tif
+	docker-compose run --rm gdal gdalwarp -of GTiff -t_srs "EPSG:4326" -r bilinear /contour/dem_20m.tif /contour/$(@F)
+	sudo rm contour/dem_20m.tif
+
+contour/contour.shp: contour/dem_20m-wgs84.tif
+	CURRENT_UID=$(id -u):$(id -g) docker-compose run --rm gdal gdal_contour -i 100 -a height /contour/$(<F) /contour/$(@F)
+
+contour-info: contour/contour.shp
+	CURRENT_UID=$(id -u):$(id -g) docker-compose run --rm gdal ogrinfo /contour/$(<F) -al -geom=NO | head -20
+
+contour/contour.geojson: contour/contour.shp
+	CURRENT_UID=$(id -u):$(id -g) docker-compose run --rm gdal ogr2ogr -f GEOJSON /contour/$(@F) /contour/$(<F)
+
+jojo: 	
+	echo $$jojo

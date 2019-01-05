@@ -16,3 +16,6 @@ wikidata/*
 
 # generated source files
 build/*
+
+# generated contour files
+contour/*

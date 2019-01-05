@@ -118,11 +118,23 @@ services:
     image: "openmaptiles/postserve:0.2"
     env_file: .env
     networks:
-     - postgres_conn
+    - postgres_conn
     ports:
     - "8090:8080"
     volumes:
-     - ./build/openmaptiles.tm2source:/mapping
+    - ./build/openmaptiles.tm2source:/mapping
+  curl:
+    image: "appropriate/curl:latest"
+    volumes:
+     - ./contour:/contour
+  gdal:
+    image: "klokantech/gdal:2.3"
+    volumes:
+     - ./contour:/contour
+  tippecanoe:
+    image: "tippecanoe:1.32.9"
+    volumes:
+     - ./contour:/contour
 
 networks:
   postgres_conn:
