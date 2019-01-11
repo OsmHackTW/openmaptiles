@@ -11,7 +11,7 @@ services:
     networks:
     - postgres_conn
     ports:
-     - "5432"
+     - "5432:5432"
     env_file: .env
   import-natural-earth:
     image: "openmaptiles/import-natural-earth:1.4"
@@ -126,15 +126,15 @@ services:
   curl:
     image: "appropriate/curl:latest"
     volumes:
-     - ./contour:/contour
+     - ./data:/contour
   gdal:
     image: "klokantech/gdal:2.3"
     volumes:
-     - ./contour:/contour
+     - ./data:/contour
   tippecanoe:
     image: "tippecanoe:1.32.9"
     volumes:
-     - ./contour:/contour
+     - ./data:/contour
 
 networks:
   postgres_conn:

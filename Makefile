@@ -82,10 +82,12 @@ import-osm: db-start
 	docker-compose run --rm openmaptiles-tools make clean
 	docker-compose run --rm openmaptiles-tools make
 	docker-compose run --rm import-osm
-	
-import-non-osm: db-start
+
+download-non-osn:
 	curl -L https://github.com/OsmHackTW/rumap/releases/download/rumap-v0.1.0/non-osm-data.tar.gz -o data/non-osm-data.tar.gz
 	gunzip data/non-osm-data.tar.gz
+	
+import-non-osm: db-start
 	docker exec -t openmaptiles_postgres_1 bash -c 'pg_restore /import/non-osm-data.tar -d openmaptiles -U openmaptiles'
 
 import-empty-wikidata: db-start
@@ -240,25 +242,28 @@ docker-unnecessary-clean:
 
 export CURRENT_UID := $(shell id -u):$(shell id -g)
 
-contour: 
-	mkdir contour
+data: 
+	mkdir data
 
-contour/dem_20m.zip: contour
+data/dem_20m.zip: data
 	docker-compose run --rm curl -L -o /contour/$(@F) http://data.moi.gov.tw/MoiOD/System/DownloadFile.aspx?DATA=89476AAA-53A8-46C6-8161-0E38B700B772
 
-contour/dem_20m-wgs84.tif: contour/dem_20m.zip
+data/dem_20m.tif: data/dem_20m.zip
 	docker-compose run --rm curl unzip /contour/$(<F) -d /contour dem_20m.tif
-	docker-compose run --rm gdal gdalwarp -of GTiff -t_srs "EPSG:4326" -r bilinear /contour/dem_20m.tif /contour/$(@F)
-	sudo rm contour/dem_20m.tif
+	#docker-compose run --rm gdal gdalwarp -of GTiff -t_srs "EPSG:4326" -r bilinear /contour/dem_20m.tif /contour/$(@F)
+	#sudo rm contour/dem_20m.tif
 
-contour/contour.shp: contour/dem_20m-wgs84.tif
+data/contour.shp: data/dem_20m.tif
 	CURRENT_UID=$(id -u):$(id -g) docker-compose run --rm gdal gdal_contour -i 100 -a height /contour/$(<F) /contour/$(@F)
 
-contour-info: contour/contour.shp
+contour-info: data/contour.shp
 	CURRENT_UID=$(id -u):$(id -g) docker-compose run --rm gdal ogrinfo /contour/$(<F) -al -geom=NO | head -20
 
-contour/contour.geojson: contour/contour.shp
+data/contour.geojson: data/contour.shp
 	CURRENT_UID=$(id -u):$(id -g) docker-compose run --rm gdal ogr2ogr -f GEOJSON /contour/$(@F) /contour/$(<F)
 
-jojo: 	
-	echo $$jojo
+data/contour.sql: data/contour.shp
+	docker exec -t openmaptiles_postgres_1 bash -c 'shp2pgsql /import/contour.shp > /import/contour.sql'
+
+import-contour: 
+	docker exec -t openmaptiles_postgres_1 bash -c 'psql -d openmaptiles -U openmaptiles -f /import/contour.sql'
