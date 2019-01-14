@@ -242,19 +242,17 @@ docker-unnecessary-clean:
 
 export CURRENT_UID := $(shell id -u):$(shell id -g)
 
-data: 
-	mkdir data
-
-data/dem_20m.zip: data
+data/dem_20m.zip: 
+	@mkdir -p data
 	docker-compose run --rm curl -L -o /contour/$(@F) http://data.moi.gov.tw/MoiOD/System/DownloadFile.aspx?DATA=89476AAA-53A8-46C6-8161-0E38B700B772
 
-data/dem_20m.tif: data/dem_20m.zip
+data/dem_20m-3857.tif: data/dem_20m.zip
 	docker-compose run --rm curl unzip /contour/$(<F) -d /contour dem_20m.tif
-	#docker-compose run --rm gdal gdalwarp -of GTiff -t_srs "EPSG:4326" -r bilinear /contour/dem_20m.tif /contour/$(@F)
-	#sudo rm contour/dem_20m.tif
+	docker-compose run --rm gdal gdalwarp -of GTiff -t_srs "EPSG:3857" -r bilinear /contour/dem_20m.tif /contour/$(@F)
+	sudo rm data/dem_20m.tif
 
-data/contour.shp: data/dem_20m.tif
-	CURRENT_UID=$(id -u):$(id -g) docker-compose run --rm gdal gdal_contour -i 100 -a height /contour/$(<F) /contour/$(@F)
+data/contour.shp: data/dem_20m-3857.tif
+	CURRENT_UID=$(id -u):$(id -g) docker-compose run --rm gdal gdal_contour -i 10 -a height /contour/$(<F) /contour/$(@F)
 
 contour-info: data/contour.shp
 	CURRENT_UID=$(id -u):$(id -g) docker-compose run --rm gdal ogrinfo /contour/$(<F) -al -geom=NO | head -20
@@ -265,5 +263,6 @@ data/contour.geojson: data/contour.shp
 data/contour.sql: data/contour.shp
 	docker exec -t openmaptiles_postgres_1 bash -c 'shp2pgsql /import/contour.shp > /import/contour.sql'
 
-import-contour: 
+import-contour: data/contour.sql
 	docker exec -t openmaptiles_postgres_1 bash -c 'psql -d openmaptiles -U openmaptiles -f /import/contour.sql'
+	docker-compose run --rm import-osm /usr/src/app/psql.sh -c "SELECT UpdateGeometrySRID('contour','geom',3857);"
