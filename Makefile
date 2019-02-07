@@ -81,10 +81,13 @@ psql: db-start
 
 import-osm: db-start all
 	docker-compose run --rm import-osm
-	
-import-non-osm: db-start
+
+data/non-osm-data.tar:
+	@mkdir -p data
 	curl -L https://github.com/OsmHackTW/rumap/releases/download/rumap-v0.1.0/non-osm-data.tar.gz -o data/non-osm-data.tar.gz
 	gunzip data/non-osm-data.tar.gz
+
+import-non-osm: db-start data/non-osm-data.tar
 	docker exec -t openmaptiles_postgres_1 bash -c 'pg_restore /import/non-osm-data.tar -d openmaptiles -U openmaptiles'
 
 import-empty-wikidata: db-start
