@@ -61,6 +61,7 @@ services:
     env_file: .env
     environment:
       DIFF_MODE: ${DIFF_MODE}
+      CONFIG_JSON: /config/config.json
     command: ./import_update.sh
     networks:
     - postgres_conn
@@ -68,6 +69,7 @@ services:
      - ./data:/import
      - ./build:/mapping
      - cache:/cache
+     - ./update:/config
   import-sql:
     image: "openmaptiles/import-sql:0.8"
     env_file: .env

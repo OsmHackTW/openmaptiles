@@ -3,6 +3,9 @@ test: import-osm import-non-osm import-empty-wikidata import-sql
 
 all: build/openmaptiles.tm2source/data.yml build/mapping.yaml build/tileset.sql
 
+update-osm:
+	docker-compose run --rm update-osm
+
 help:
 	@echo "=============================================================================="
 	@echo " OpenMapTiles  https://github.com/openmaptiles/openmaptiles "
