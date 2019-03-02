@@ -6,11 +6,12 @@ $$ LANGUAGE SQL IMMUTABLE STRICT;
 -- etldoc: layer_transportation[shape=record fillcolor=lightpink, style="rounded,filled",
 -- etldoc:     label="<sql> layer_transportation |<z4> z4 |<z5> z5 |<z6> z6 |<z7> z7 |<z8> z8 |<z9> z9 |<z10> z10 |<z11> z11 |<z12> z12|<z13> z13|<z14_> z14+" ] ;
 CREATE OR REPLACE FUNCTION layer_transportation(bbox geometry, zoom_level int)
-RETURNS TABLE(osm_id bigint, geometry geometry, class text, subclass text,
+RETURNS TABLE(osm_id bigint, geometry geometry, name text, class text, subclass text,
 ramp int, oneway int, brunnel TEXT, service TEXT, layer INT, level INT,
 indoor INT) AS $$
     SELECT
         osm_id, geometry,
+        NULLIF(name, '') AS name,
         CASE
             WHEN NULLIF(highway, '') IS NOT NULL OR NULLIF(public_transport, '') IS NOT NULL THEN highway_class(highway, public_transport)
             WHEN NULLIF(railway, '') IS NOT NULL THEN railway_class(railway)
@@ -38,6 +39,7 @@ indoor INT) AS $$
         -- etldoc: osm_transportation_merge_linestring_gen7 -> layer_transportation:z4
         SELECT
             osm_id, geometry,
+            NULL AS name,
             highway, NULL AS railway, NULL AS aerialway, NULL AS shipway,
             NULL AS public_transport, NULL AS service,
             NULL::boolean AS is_bridge, NULL::boolean AS is_tunnel,
@@ -52,6 +54,7 @@ indoor INT) AS $$
         -- etldoc: osm_transportation_merge_linestring_gen6 -> layer_transportation:z5
         SELECT
             osm_id, geometry,
+            NULL AS name,
             highway, NULL AS railway, NULL AS aerialway, NULL AS shipway,
             NULL AS public_transport, NULL AS service,
             NULL::boolean AS is_bridge, NULL::boolean AS is_tunnel,
@@ -66,6 +69,7 @@ indoor INT) AS $$
         -- etldoc: osm_transportation_merge_linestring_gen5 -> layer_transportation:z6
         SELECT
             osm_id, geometry,
+            NULL AS name,
             highway, NULL AS railway, NULL AS aerialway, NULL AS shipway,
             NULL AS public_transport, NULL AS service,
             NULL::boolean AS is_bridge, NULL::boolean AS is_tunnel,
@@ -80,6 +84,7 @@ indoor INT) AS $$
         -- etldoc: osm_transportation_merge_linestring_gen4  ->  layer_transportation:z7
         SELECT
             osm_id, geometry,
+            NULL AS name,
             highway, NULL AS railway, NULL AS aerialway, NULL AS shipway,
             NULL AS public_transport, NULL AS service,
             NULL::boolean AS is_bridge, NULL::boolean AS is_tunnel,
@@ -94,6 +99,7 @@ indoor INT) AS $$
         -- etldoc: osm_transportation_merge_linestring_gen3  ->  layer_transportation:z8
         SELECT
             osm_id, geometry,
+            NULL AS name,
             highway, NULL AS railway, NULL AS aerialway, NULL AS shipway,
             NULL AS public_transport, NULL AS service,
             NULL::boolean AS is_bridge, NULL::boolean AS is_tunnel,
@@ -109,6 +115,7 @@ indoor INT) AS $$
         -- etldoc: osm_highway_linestring_gen2  ->  layer_transportation:z10
         SELECT
             osm_id, geometry,
+            NULL AS name,
             highway, NULL AS railway, NULL AS aerialway, NULL AS shipway,
             NULL AS public_transport, NULL AS service,
             NULL::boolean AS is_bridge, NULL::boolean AS is_tunnel,
@@ -124,6 +131,7 @@ indoor INT) AS $$
         -- etldoc: osm_highway_linestring_gen1  ->  layer_transportation:z11
         SELECT
             osm_id, geometry,
+            NULL AS name,
             highway, NULL AS railway, NULL AS aerialway, NULL AS shipway,
             NULL AS public_transport, NULL AS service,
             NULL::boolean AS is_bridge, NULL::boolean AS is_tunnel,
@@ -140,7 +148,7 @@ indoor INT) AS $$
         -- etldoc: osm_highway_linestring       ->  layer_transportation:z13
         -- etldoc: osm_highway_linestring       ->  layer_transportation:z14_
         SELECT
-            osm_id, geometry,
+            osm_id, geometry, name,
             highway, NULL AS railway, NULL AS aerialway, NULL AS shipway,
             public_transport, service_value(service) AS service,
             is_bridge, is_tunnel, is_ford, is_ramp, is_oneway, man_made,
@@ -175,7 +183,7 @@ indoor INT) AS $$
 
         -- etldoc: osm_railway_linestring_gen5  ->  layer_transportation:z8
         SELECT
-            osm_id, geometry,
+            osm_id, geometry, name,
             NULL AS highway, railway, NULL AS aerialway, NULL AS shipway,
             NULL AS public_transport, service_value(service) AS service,
             NULL::boolean AS is_bridge, NULL::boolean AS is_tunnel,
@@ -190,7 +198,7 @@ indoor INT) AS $$
 
         -- etldoc: osm_railway_linestring_gen4  ->  layer_transportation:z9
         SELECT
-            osm_id, geometry,
+            osm_id, geometry, name,
             NULL AS highway, railway, NULL AS aerialway, NULL AS shipway,
             NULL AS public_transport, service_value(service) AS service,
             NULL::boolean AS is_bridge, NULL::boolean AS is_tunnel,
@@ -205,7 +213,7 @@ indoor INT) AS $$
 
         -- etldoc: osm_railway_linestring_gen3  ->  layer_transportation:z10
         SELECT
-            osm_id, geometry,
+            osm_id, geometry, name,
             NULL AS highway, railway, NULL AS aerialway, NULL AS shipway,
             NULL AS public_transport, service_value(service) AS service,
             is_bridge, is_tunnel, is_ford, is_ramp, is_oneway, NULL as man_made,
@@ -218,7 +226,7 @@ indoor INT) AS $$
 
         -- etldoc: osm_railway_linestring_gen2  ->  layer_transportation:z11
         SELECT
-            osm_id, geometry,
+            osm_id, geometry, name,
             NULL AS highway, railway, NULL AS aerialway, NULL AS shipway,
             NULL AS public_transport, service_value(service) AS service,
             is_bridge, is_tunnel, is_ford, is_ramp, is_oneway, NULL as man_made,
@@ -231,7 +239,7 @@ indoor INT) AS $$
 
         -- etldoc: osm_railway_linestring_gen1  ->  layer_transportation:z12
         SELECT
-            osm_id, geometry,
+            osm_id, geometry, name,
             NULL AS highway, railway, NULL AS aerialway, NULL AS shipway,
             NULL AS public_transport, service_value(service) AS service,
             is_bridge, is_tunnel, is_ford, is_ramp, is_oneway, NULL as man_made,
@@ -245,7 +253,7 @@ indoor INT) AS $$
         -- etldoc: osm_railway_linestring       ->  layer_transportation:z13
         -- etldoc: osm_railway_linestring       ->  layer_transportation:z14_
         SELECT
-            osm_id, geometry,
+            osm_id, geometry, name,
             NULL AS highway, railway, NULL AS aerialway, NULL AS shipway,
             NULL AS public_transport, service_value(service) AS service,
             is_bridge, is_tunnel, is_ford, is_ramp, is_oneway, NULL as man_made,
@@ -259,7 +267,7 @@ indoor INT) AS $$
 
         -- etldoc: osm_aerialway_linestring_gen1  ->  layer_transportation:z12
         SELECT
-            osm_id, geometry,
+            osm_id, geometry, name,
             NULL AS highway, NULL as railway, aerialway, NULL AS shipway,
             NULL AS public_transport, service_value(service) AS service,
             is_bridge, is_tunnel, is_ford, is_ramp, is_oneway, NULL as man_made,
@@ -272,7 +280,7 @@ indoor INT) AS $$
         -- etldoc: osm_aerialway_linestring       ->  layer_transportation:z13
         -- etldoc: osm_aerialway_linestring       ->  layer_transportation:z14_
         SELECT
-            osm_id, geometry,
+            osm_id, geometry, name,
             NULL AS highway, NULL as railway, aerialway, NULL AS shipway,
             NULL AS public_transport, service_value(service) AS service,
             is_bridge, is_tunnel, is_ford, is_ramp, is_oneway, NULL as man_made,
@@ -284,7 +292,7 @@ indoor INT) AS $$
 
         -- etldoc: osm_shipway_linestring_gen2  ->  layer_transportation:z11
         SELECT
-            osm_id, geometry,
+            osm_id, geometry, name,
             NULL AS highway, NULL AS railway, NULL AS aerialway, shipway,
             NULL AS public_transport, service_value(service) AS service,
             is_bridge, is_tunnel, is_ford, is_ramp, is_oneway, NULL as man_made,
@@ -296,7 +304,7 @@ indoor INT) AS $$
 
         -- etldoc: osm_shipway_linestring_gen1  ->  layer_transportation:z12
         SELECT
-            osm_id, geometry,
+            osm_id, geometry, name,
             NULL AS highway, NULL AS railway, NULL AS aerialway, shipway,
             NULL AS public_transport, service_value(service) AS service,
             is_bridge, is_tunnel, is_ford, is_ramp, is_oneway, NULL as man_made,
@@ -309,7 +317,7 @@ indoor INT) AS $$
         -- etldoc: osm_shipway_linestring       ->  layer_transportation:z13
         -- etldoc: osm_shipway_linestring       ->  layer_transportation:z14_
         SELECT
-            osm_id, geometry,
+            osm_id, geometry, name,
             NULL AS highway, NULL AS railway, NULL AS aerialway, shipway,
             NULL AS public_transport, service_value(service) AS service,
             is_bridge, is_tunnel, is_ford, is_ramp, is_oneway, NULL as man_made,
@@ -326,7 +334,7 @@ indoor INT) AS $$
         -- etldoc: osm_highway_polygon          ->  layer_transportation:z13
         -- etldoc: osm_highway_polygon          ->  layer_transportation:z14_
         SELECT
-            osm_id, geometry,
+            osm_id, geometry, NULL AS name,
             highway, NULL AS railway, NULL AS aerialway, NULL AS shipway,
             public_transport, NULL AS service,
             CASE WHEN man_made IN ('bridge') THEN TRUE
