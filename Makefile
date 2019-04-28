@@ -6,6 +6,10 @@ all: build/openmaptiles.tm2source/data.yml build/mapping.yaml build/tileset.sql
 update-osm:
 	docker-compose run --rm update-osm
 
+changed-tiles:
+	docker-compose run --rm generate-changed-vectortiles /update/get_tiles.sh
+	docker-compose run --rm generate-changed-vectortiles
+
 help:
 	@echo "=============================================================================="
 	@echo " OpenMapTiles  https://github.com/openmaptiles/openmaptiles "

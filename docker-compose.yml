@@ -99,6 +99,7 @@ services:
     volumes:
     - ./data:/export
     - ./build/openmaptiles.tm2source:/tm2source
+    - ./update:/update
     networks:
     - postgres_conn
     env_file: .env
