@@ -1,0 +1,3 @@
+[submodule "styles/outdoor"]
+	path = styles/outdoor
+	url = https://github.com/OsmHackTW/klokantech-terrain-gl-style
