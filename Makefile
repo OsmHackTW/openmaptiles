@@ -1,5 +1,5 @@
 .PHONY: db-start
-test: import-osm import-non-osm import-empty-wikidata import-sql
+serve-taiwan: clean all import-taiwan import-non-osm import-empty-wikidata import-sql
 
 all: build/openmaptiles.tm2source/data.yml build/mapping.yaml build/tileset.sql
 
@@ -88,6 +88,12 @@ psql: db-start
 
 import-osm: db-start all
 	docker-compose run --rm import-osm
+
+data/taiwan-latest.osm.pbf:
+	@mkdir -p data
+	curl https://download.geofabrik.de/asia/taiwan-latest.osm.pbf -o $@
+
+import-taiwan: data/taiwan-latest.osm.pbf import-osm
 
 data/non-osm-data.tar:
 	@mkdir -p data
