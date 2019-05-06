@@ -33,12 +33,15 @@ services:
     env_file: .env
     environment:
       DIFF_MODE: ${DIFF_MODE}
+      CONFIG_JSON: /config/config.json
+    command: /config/import_osm.sh
     networks:
     - postgres_conn
     volumes:
      - ./data:/import
      - ./build:/mapping
      - cache:/cache
+     - ./update:/config
   import-osmborder:
     image: "openmaptiles/import-osmborder:0.4"
     env_file: .env
