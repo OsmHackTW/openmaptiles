@@ -4,9 +4,11 @@ serve-taiwan: db-start clean import-taiwan import-non-osm import-empty-wikidata 
 all: build/openmaptiles.tm2source/data.yml build/mapping.yaml build/tileset.sql
 
 update-hourly:
+	update/set_state.sh --hour
 	docker-compose run --rm -e CONFIG_JSON=/config/config-hourly.json update-osm 
 
 update-minutely:
+	update/set_state.sh --minute
 	docker-compose run --rm -e CONFIG_JSON=/config/config-minutely.json update-osm 
 
 changed-tiles:
