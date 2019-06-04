@@ -1,14 +1,18 @@
 .PHONY: db-start
-serve-taiwan: clean all import-taiwan import-non-osm import-empty-wikidata import-sql
+serve-taiwan: db-start clean import-taiwan import-non-osm import-empty-wikidata import-sql
 
 all: build/openmaptiles.tm2source/data.yml build/mapping.yaml build/tileset.sql
 
-update-osm:
-	docker-compose run --rm update-osm
+update-hourly:
+	update/set_state.sh --hour
+	docker-compose run --rm -e CONFIG_JSON=/config/config-hourly.json update-osm 
+
+update-minutely:
+	update/set_state.sh --minute
+	docker-compose run --rm -e CONFIG_JSON=/config/config-minutely.json update-osm 
 
 changed-tiles:
-	docker-compose run --rm generate-changed-vectortiles /update/get_tiles.sh
-	docker-compose run --rm generate-changed-vectortiles
+	docker-compose run --rm generate-changed-vectortiles /bin/bash -c '/update/get_tiles.sh && /usr/src/app/export-list.sh'
 
 help:
 	@echo "=============================================================================="
@@ -69,6 +73,7 @@ clean-docker:
 	docker volume ls -q | grep openmaptiles  | xargs -r docker volume rm || true
 
 db-start:
+	@mkdir -p data
 	docker-compose up -d postgres
 
 download-geofabrik:
@@ -100,8 +105,9 @@ data/non-osm-data.tar:
 	curl -L https://github.com/OsmHackTW/rumap/releases/download/rumap-v0.1.0/non-osm-data.tar.gz -o data/non-osm-data.tar.gz
 	gunzip data/non-osm-data.tar.gz
 
+DB_CONTAINER = $(shell docker-compose ps -q postgres)
 import-non-osm: db-start data/non-osm-data.tar
-	docker exec -t openmaptiles_postgres_1 bash -c 'pg_restore /import/non-osm-data.tar -d openmaptiles -U openmaptiles'
+	docker exec -it $(DB_CONTAINER) pg_restore /import/non-osm-data.tar -d openmaptiles -U openmaptiles
 
 import-empty-wikidata: db-start
 	docker-compose run --rm import-osm /usr/src/app/psql.sh -c "CREATE TABLE IF NOT EXISTS wd_names(id varchar(20), page varchar(200), labels hstore);"
