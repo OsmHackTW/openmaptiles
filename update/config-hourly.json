@@ -1,0 +1,4 @@
+{
+    "replication_url": "https://planet.openstreetmap.org/replication/hour/",
+    "replication_interval": "1h"
+}

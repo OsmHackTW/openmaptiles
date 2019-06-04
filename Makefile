@@ -3,8 +3,11 @@ serve-taiwan: db-start clean import-taiwan import-non-osm import-empty-wikidata 
 
 all: build/openmaptiles.tm2source/data.yml build/mapping.yaml build/tileset.sql
 
-update-osm:
-	docker-compose run --rm update-osm
+update-hourly:
+	docker-compose run --rm -e CONFIG_JSON=/config/config-hourly.json update-osm 
+
+update-minutely:
+	docker-compose run --rm -e CONFIG_JSON=/config/config-minutely.json update-osm 
 
 changed-tiles:
 	docker-compose run --rm generate-changed-vectortiles /bin/bash -c '/update/get_tiles.sh && /usr/src/app/export-list.sh'

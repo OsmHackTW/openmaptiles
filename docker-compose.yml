@@ -64,7 +64,6 @@ services:
     env_file: .env
     environment:
       DIFF_MODE: ${DIFF_MODE}
-      CONFIG_JSON: /config/config.json
     command: ./import_update.sh
     networks:
     - postgres_conn
