@@ -1,13 +1,19 @@
 #!/bin/bash
 
 case $1 in
-    # hour difference with Tue Jun  4 03:00:00 CST 2019
+    # hour difference with Tue Jun 4 03:00:00 UTC 2019
     # sequence number=58940
     --hour)
     echo $[($2 - 1559617200)/3600 + 58940]
     ;;
-    # minute difference with Tue Jun  4 03:00:02 CST 2019
-    # sequence number=3523980
+
+    # minute difference with latest planet state file
     --minute)
-    echo $[($2 - 1559617202)/60 + 3523980]
+    benchmark=benchmark
+    curl https://planet.openstreetmap.org/replication/minute/state > $benchmark
+    timeString=$(tail -1 $benchmark | tr -d 'timestamp=\\')
+    timestamp=$(date -d "$timeString" +%s)
+    seq=$(sed -n 2p $benchmark | tr -d "sequenceNumber=")
+    rm $benchmark
+    echo $[$seq - ($timestamp - $2)/60 - 1 ]
 esac
