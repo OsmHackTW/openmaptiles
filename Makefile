@@ -11,6 +11,9 @@ update-minutely:
 	update/set_state.sh --minute
 	docker-compose run --rm -e CONFIG_JSON=/config/config-minutely.json update-osm 
 
+stop-update:
+	docker stop $(shell docker-compose ps -q update-osm)
+
 changed-tiles:
 	docker-compose run --rm generate-changed-vectortiles /bin/bash -c '/update/get_tiles.sh && /usr/src/app/export-list.sh'
 
