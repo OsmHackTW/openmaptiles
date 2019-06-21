@@ -5,6 +5,6 @@
 export PATH="/usr/local/bin/:$PATH";
 
 echo PATH= $PATH
-make stop-update
+make pause-update && \
 make changed-tiles && \
-make update-minutely
+make resume-update
