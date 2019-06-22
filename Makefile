@@ -155,7 +155,7 @@ start-tileserver:
 	@echo "* "
 	@echo "***********************************************************"
 	@echo " "
-	docker run -it --rm --name tileserver-gl -v $$(pwd)/data:/data -p 8080:80 klokantech/tileserver-gl
+	docker run -it --rm --name tileserver-gl -v $$(pwd):/resources -p 8080:80 klokantech/tileserver-gl --config /resources/serve/config.json
 
 start-postserve:
 	@echo " "
