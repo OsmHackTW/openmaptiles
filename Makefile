@@ -1,5 +1,5 @@
 .PHONY: db-start
-serve-taiwan: db-start clean import-taiwan import-non-osm import-empty-wikidata import-sql
+serve-taiwan: db-start clean import-taiwan import-non-osm import-empty-wikidata import-sql generate-tiles
 
 all: build/openmaptiles.tm2source/data.yml build/mapping.yaml build/tileset.sql
 
