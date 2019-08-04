@@ -1,0 +1,57 @@
+generalized_tables:
+  # etldoc: imposm3 -> osm_border_linestring_gen10
+  border_linestring_gen10:
+    source: border_linestring_gen9
+    tolerance: ZRES4
+  # etldoc: imposm3 -> osm_border_linestring_gen9
+  border_linestring_gen9:
+    source: border_linestring_gen8
+    tolerance: ZRES5
+  # etldoc: imposm3 -> osm_border_linestring_gen8
+  border_linestring_gen8:
+    source: border_linestring_gen7
+    tolerance: ZRES6
+  # etldoc: imposm3 -> osm_border_linestring_gen7
+  border_linestring_gen7:
+    source: border_linestring_gen6
+    tolerance: ZRES7
+  # etldoc: imposm3 -> osm_border_linestring_gen6
+  border_linestring_gen6:
+    source: border_linestring_gen5
+    tolerance: ZRES8
+  # etldoc: imposm3 -> osm_border_linestring_gen5
+  border_linestring_gen5:
+    source: border_linestring_gen4
+    tolerance: ZRES9
+  # etldoc: imposm3 -> osm_border_linestring_gen4
+  border_linestring_gen4:
+    source: border_linestring_gen3
+    tolerance: ZRES10
+  # etldoc: imposm3 -> osm_border_linestring_gen3
+  border_linestring_gen3:
+    source: border_linestring_gen2
+    tolerance: ZRES11
+  # etldoc: imposm3 -> osm_border_linestring_gen2
+  border_linestring_gen2:
+    source: border_linestring_gen1
+    tolerance: ZRES12
+  # etldoc: imposm3 -> osm_border_linestring_gen1
+  border_linestring_gen1:
+    source: border_linestring
+    tolerance: ZRES13
+
+tables:
+  # etldoc: imposm3 -> osm_border_linestring
+  border_linestring:
+    type: linestring
+    fields:
+    - name: osm_id
+      type: id
+    - name: geometry
+      type: geometry
+    - key: admin_level
+      name: admin_level
+      type: integer
+    mapping:
+      boundary:
+      - administrative
